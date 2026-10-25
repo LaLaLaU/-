@@ -69,25 +69,25 @@ export default function App() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7] text-[#1D1D1F] flex flex-col justify-between">
-      {/* Compact Single-Row Top Bar (Mode Switcher + Install App) */}
-      <header className="bg-[#F5F5F7]/90 backdrop-blur-md border-b border-black/[0.06] px-4 sm:px-8 py-2.5 flex items-center justify-between gap-4">
+    <div className="min-h-screen bg-[#F5F5F7] text-[#1D1D1F] flex flex-col sm:flex-row">
+      {/* Left Vertical Navigation Sidebar */}
+      <aside className="bg-[#F5F5F7]/95 backdrop-blur-md border-b sm:border-b-0 sm:border-r border-black/[0.07] px-3 py-2.5 sm:w-[132px] sm:py-4 sm:px-2.5 flex sm:flex-col items-center sm:items-stretch justify-between gap-2 shrink-0">
         <a
           href="#top"
-          className="text-sm sm:text-base font-bold tracking-tight text-[#1D1D1F] whitespace-nowrap shrink-0"
+          className="text-sm sm:text-base font-bold tracking-tight text-[#1D1D1F] sm:px-2 sm:pt-1 whitespace-nowrap shrink-0 text-center"
         >
-          温时计时
+          加温计时
         </a>
 
-        {/* Single Segmented Navigation Bar */}
+        {/* Vertical Mode Switcher Navigation on Left */}
         <nav
           aria-label="计算模式切换"
-          className="bg-[#E8E8ED] p-1 rounded-2xl grid grid-cols-3 gap-1 w-full max-w-md"
+          className="bg-[#E8E8ED] p-1 rounded-2xl flex sm:flex-col gap-1.5 w-full"
         >
           <button
             type="button"
             onClick={() => handleSwitchMode('diff')}
-            className={`min-h-[38px] px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+            className={`min-h-[38px] sm:min-h-[42px] px-2.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap flex-1 sm:flex-initial ${
               activeMode === 'diff'
                 ? 'bg-white text-[#1D1D1F] shadow-sm'
                 : 'text-[#6E6E73] hover:text-[#1D1D1F]'
@@ -95,13 +95,13 @@ export default function App() {
             aria-pressed={activeMode === 'diff'}
           >
             <Timer className="w-3.5 h-3.5 text-[#FF6B00] shrink-0" />
-            <span>算时间差</span>
+            <span>时差</span>
           </button>
 
           <button
             type="button"
             onClick={() => handleSwitchMode('forward')}
-            className={`min-h-[38px] px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+            className={`min-h-[38px] sm:min-h-[42px] px-2.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap flex-1 sm:flex-initial ${
               activeMode === 'forward'
                 ? 'bg-white text-[#1D1D1F] shadow-sm'
                 : 'text-[#6E6E73] hover:text-[#1D1D1F]'
@@ -109,13 +109,13 @@ export default function App() {
             aria-pressed={activeMode === 'forward'}
           >
             <ArrowRight className="w-3.5 h-3.5 text-[#FF6B00] shrink-0" />
-            <span>顺推几点结束</span>
+            <span>顺推</span>
           </button>
 
           <button
             type="button"
             onClick={() => handleSwitchMode('backward')}
-            className={`min-h-[38px] px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+            className={`min-h-[38px] sm:min-h-[42px] px-2.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap flex-1 sm:flex-initial ${
               activeMode === 'backward'
                 ? 'bg-white text-[#1D1D1F] shadow-sm'
                 : 'text-[#6E6E73] hover:text-[#1D1D1F]'
@@ -123,19 +123,19 @@ export default function App() {
             aria-pressed={activeMode === 'backward'}
           >
             <History className="w-3.5 h-3.5 text-[#FF6B00] shrink-0" />
-            <span>倒推几点开始</span>
+            <span>倒推</span>
           </button>
         </nav>
 
-        <div className="flex items-center shrink-0">
+        <div className="flex items-center justify-center shrink-0">
           <PWAInstallModal />
         </div>
-      </header>
+      </aside>
 
       {/* Main Horizontal 3-Column Stage (Designed for Phone Landscape & Desktop) */}
       <main
         id="top"
-        className="flex-1 max-w-6xl w-full mx-auto px-3 sm:px-6 py-4 flex flex-col justify-center"
+        className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-4 py-3 flex flex-col justify-center"
       >
         {/* Subtle Portrait Rotation Suggestion Banner (Visible only on narrow portrait screens < 500px) */}
         <div className="sm:hidden mb-3 px-3 py-1.5 rounded-xl bg-white/80 border border-black/[0.06] flex items-center justify-center gap-1.5 text-[11px] text-[#6E6E73]">
@@ -145,7 +145,7 @@ export default function App() {
 
         {/* 3-Column Horizontal Sketch Architecture:
             [ Left Time Node ]  ----( X.X小时 / X时X分 )---->  [ Right Time Node ] */}
-        <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-5 items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 sm:gap-3.5 items-center">
           {/* LEFT NODE: Start Time */}
           <div className="sm:col-span-4">
             {activeMode === 'diff' && (
@@ -174,7 +174,7 @@ export default function App() {
 
             {activeMode === 'backward' && (
               <TimeEndpointNode
-                title="最迟开始时间"
+                title="开始时间"
                 value={backwardResult.targetPoint}
                 editable={false}
                 revealed={true}

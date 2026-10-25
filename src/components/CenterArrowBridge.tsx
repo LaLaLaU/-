@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   DurationValue,
   DurationResult,
   formatDecimalHours,
   formatHMText,
 } from '../utils/timeCalc';
-import { Minus, Plus, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Minus, Plus, AlertCircle, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface CenterArrowBridgeProps {
   mode: 'diff' | 'forward' | 'backward';
@@ -15,8 +15,13 @@ interface CenterArrowBridgeProps {
   onChangeDuration: (next: DurationValue) => void;
 }
 
-const QUICK_HOURS = [8, 12, 15, 16, 18, 19, 20, 24];
-// Requirement 4: Remove "整点", provide more minute choices (+5分 to +55分)
+// Page 1: 8h to 24h; Page 2: >24h
+const HOURS_PAGES: number[][] = [
+  [8, 12, 15, 16, 18, 19, 20, 24],
+  [26, 28, 30, 32, 36, 40, 44, 48],
+];
+
+// Minute options without '+' prefix
 const QUICK_MINUTES = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
 
 export const CenterArrowBridge: React.FC<CenterArrowBridgeProps> = ({
@@ -26,7 +31,17 @@ export const CenterArrowBridge: React.FC<CenterArrowBridgeProps> = ({
   hasConfirmedDuration,
   onChangeDuration,
 }) => {
-  const [showPicker, setShowPicker] = useState(false);
+  const [hourPage, setHourPage] = useState<number>(duration.hours > 24 ? 1 : 0);
+  const swipeStartX = useRef<number | null>(null);
+
+  // Sync page automatically when hours cross the 24h boundary via +/- buttons
+  useEffect(() => {
+    if (duration.hours > 24 && hourPage === 0) {
+      setHourPage(1);
+    } else if (duration.hours <= 24 && hourPage === 1 && HOURS_PAGES[0].includes(duration.hours)) {
+      setHourPage(0);
+    }
+  }, [duration.hours]);
 
   // Mode 1: Read-only calculated interval above and below the arrow
   if (mode === 'diff') {
@@ -92,10 +107,45 @@ export const CenterArrowBridge: React.FC<CenterArrowBridgeProps> = ({
     onChangeDuration({ ...duration, hours: nextH });
   };
 
+  // Independent Hour selection: preserves currently selected minutes!
+  const handleSelectHour = (h: number) => {
+    onChangeDuration({ ...duration, hours: h });
+  };
+
+  // Independent Minute selection: preserves currently selected hours!
   const handleToggleMinute = (m: number) => {
-    // Clicking an already active minute resets minutes to 0, or sets to m
     const nextMin = duration.minutes === m ? 0 : m;
     onChangeDuration({ ...duration, minutes: nextMin });
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    swipeStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (swipeStartX.current === null) return;
+    const deltaX = e.changedTouches[0].clientX - swipeStartX.current;
+    if (deltaX < -30 && hourPage < HOURS_PAGES.length - 1) {
+      setHourPage(hourPage + 1);
+    } else if (deltaX > 30 && hourPage > 0) {
+      setHourPage(hourPage - 1);
+    }
+    swipeStartX.current = null;
+  };
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    swipeStartX.current = e.clientX;
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (swipeStartX.current === null) return;
+    const deltaX = e.clientX - swipeStartX.current;
+    if (deltaX < -35 && hourPage < HOURS_PAGES.length - 1) {
+      setHourPage(hourPage + 1);
+    } else if (deltaX > 35 && hourPage > 0) {
+      setHourPage(hourPage - 1);
+    }
+    swipeStartX.current = null;
   };
 
   return (
@@ -122,14 +172,12 @@ export const CenterArrowBridge: React.FC<CenterArrowBridgeProps> = ({
           <Minus className="w-4 h-4" />
         </button>
 
-        <button
-          type="button"
-          onClick={() => setShowPicker(!showPicker)}
-          className="px-4 py-1.5 rounded-2xl bg-white border-2 border-[#FF6B00] shadow-xs text-xl sm:text-2xl font-bold font-mono-tabular text-[#FF6B00] cursor-pointer hover:bg-[#FFF3EB] transition-colors whitespace-nowrap shrink-0"
-          aria-label="点选加温小时数"
+        <div
+          className="px-4 py-1.5 rounded-2xl bg-white border-2 border-[#FF6B00] shadow-xs text-xl sm:text-2xl font-bold font-mono-tabular text-[#FF6B00] whitespace-nowrap shrink-0 select-none"
+          aria-label="当前加温小时数"
         >
           {decimalHoursStr} 小时
-        </button>
+        </div>
 
         <button
           type="button"
@@ -182,38 +230,95 @@ export const CenterArrowBridge: React.FC<CenterArrowBridgeProps> = ({
       </div>
 
       {/* Below the arrow: X时X分 */}
-      <button
-        type="button"
-        onClick={() => setShowPicker(!showPicker)}
-        className="text-base sm:text-lg font-bold font-mono-tabular text-[#1D1D1F] hover:text-[#FF6B00] transition-colors cursor-pointer whitespace-nowrap"
-      >
+      <div className="text-base sm:text-lg font-bold font-mono-tabular text-[#1D1D1F] whitespace-nowrap select-none">
         {hmStr}
-      </button>
+      </div>
 
-      {/* Compact Quick Hours & Expanded Minutes Grid right under the arrow */}
-      <div className="mt-2 w-full max-w-[260px] bg-white rounded-2xl p-2.5 border border-black/[0.07] shadow-xs">
-        <div className="grid grid-cols-4 gap-1">
-          {QUICK_HOURS.map((h) => {
-            const active = duration.hours === h && duration.minutes === 0;
-            return (
+      {/* Compact Quick Hours (Swipeable Page 1: 8-24h / Page 2: >24h) & Independent Minutes Grid */}
+      <div className="mt-2 w-full max-w-[260px] bg-white rounded-2xl p-2.5 border border-black/[0.07] shadow-xs select-none">
+        {/* Swipeable Hours Area */}
+        <div
+          data-testid="hours-swipe-container"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
+          className="touch-pan-y"
+        >
+          <div className="grid grid-cols-4 gap-1">
+            {HOURS_PAGES[hourPage].map((h) => {
+              // Selected state depends ONLY on duration.hours === h so hours & minutes highlight simultaneously
+              const active = duration.hours === h;
+              return (
+                <button
+                  key={h}
+                  type="button"
+                  onClick={() => handleSelectHour(h)}
+                  className={`min-h-[30px] rounded-lg font-mono-tabular text-xs font-semibold transition-all cursor-pointer ${
+                    active
+                      ? 'bg-[#FF6B00] text-white shadow-xs'
+                      : 'bg-[#F5F5F7] text-[#1D1D1F] hover:bg-[#E8E8ED]'
+                  }`}
+                >
+                  {h}h
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Subtle Page Indicator & Switcher for Page 1 (8-24h) and Page 2 (24h+) */}
+          <div className="flex items-center justify-between mt-1.5 px-0.5">
+            <button
+              type="button"
+              onClick={() => setHourPage(0)}
+              aria-label="第一页 8至24小时"
+              className={`text-[10px] font-medium flex items-center gap-0.5 px-1.5 py-0.5 rounded-md transition-colors cursor-pointer ${
+                hourPage === 0
+                  ? 'text-[#FF6B00] bg-[#FFF3EB] font-semibold'
+                  : 'text-[#8E8E93] hover:text-[#1D1D1F]'
+              }`}
+            >
+              <ChevronLeft className="w-3 h-3" />
+              <span>8-24h</span>
+            </button>
+
+            <div className="flex items-center gap-1.5">
               <button
-                key={h}
                 type="button"
-                onClick={() => onChangeDuration({ hours: h, minutes: 0 })}
-                className={`min-h-[30px] rounded-lg font-mono-tabular text-xs font-semibold transition-all cursor-pointer ${
-                  active
-                    ? 'bg-[#FF6B00] text-white shadow-xs'
-                    : 'bg-[#F5F5F7] text-[#1D1D1F] hover:bg-[#E8E8ED]'
+                onClick={() => setHourPage(0)}
+                aria-label="切换到第一页"
+                className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                  hourPage === 0 ? 'w-4 bg-[#FF6B00]' : 'w-1.5 bg-[#D1D1D6]'
                 }`}
-              >
-                {h}h
-              </button>
-            );
-          })}
+              />
+              <button
+                type="button"
+                onClick={() => setHourPage(1)}
+                aria-label="切换到第二页(24小时以上)"
+                className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                  hourPage === 1 ? 'w-4 bg-[#FF6B00]' : 'w-1.5 bg-[#D1D1D6]'
+                }`}
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setHourPage(1)}
+              aria-label="第二页 24小时以上"
+              className={`text-[10px] font-medium flex items-center gap-0.5 px-1.5 py-0.5 rounded-md transition-colors cursor-pointer ${
+                hourPage === 1
+                  ? 'text-[#FF6B00] bg-[#FFF3EB] font-semibold'
+                  : 'text-[#8E8E93] hover:text-[#1D1D1F]'
+              }`}
+            >
+              <span>24h+</span>
+              <ChevronRight className="w-3 h-3" />
+            </button>
+          </div>
         </div>
 
-        {/* Requirement 4: Removed "整点", added rich minute choices (+5分 to +55分) */}
-        <div className="grid grid-cols-6 gap-1 mt-1.5 pt-1.5 border-t border-black/[0.06]">
+        {/* Minutes Grid: '+' removed, independent selection highlighted simultaneously with hours */}
+        <div className="grid grid-cols-4 gap-1 mt-1.5 pt-1.5 border-t border-black/[0.06]">
           {QUICK_MINUTES.map((m) => {
             const active = duration.minutes === m;
             return (
@@ -221,13 +326,13 @@ export const CenterArrowBridge: React.FC<CenterArrowBridgeProps> = ({
                 key={m}
                 type="button"
                 onClick={() => handleToggleMinute(m)}
-                className={`min-h-[26px] rounded-lg font-mono-tabular text-[10px] font-semibold transition-all cursor-pointer ${
+                className={`min-h-[26px] px-1 rounded-lg font-mono-tabular text-[11px] font-semibold transition-all cursor-pointer whitespace-nowrap ${
                   active
-                    ? 'bg-[#1D1D1F] text-white'
+                    ? 'bg-[#FF6B00] text-white shadow-xs'
                     : 'bg-[#F5F5F7] text-[#6E6E73] hover:text-[#1D1D1F]'
                 }`}
               >
-                +{m}分
+                {m}分
               </button>
             );
           })}

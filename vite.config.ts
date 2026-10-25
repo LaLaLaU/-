@@ -14,8 +14,8 @@ export default defineConfig(() => {
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icon.svg'],
         manifest: {
           id: '/',
-          name: '温时 · 烘烤加温计时台账',
-          short_name: '温时计时',
+          name: '加温计时',
+          short_name: '加温计时',
           description: '专为喷漆烘烤、加温固化设计的高颜值时差与顺推倒推时间计算工具。',
           theme_color: '#F5F5F7',
           background_color: '#F5F5F7',

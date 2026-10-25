@@ -158,7 +158,7 @@ export const TimeEndpointNode: React.FC<TimeEndpointNodeProps> = ({
       }`}
     >
       {/* Top Status & Quick "Now" Button */}
-      <div className="w-full flex items-center justify-between gap-2 mb-2.5">
+      <div className="w-full flex items-center justify-between gap-2 mb-2.5 whitespace-nowrap">
         <div className="flex items-center gap-1.5">
           <span
             className={`text-xs sm:text-sm font-semibold ${
@@ -378,26 +378,25 @@ export const TimeEndpointNode: React.FC<TimeEndpointNodeProps> = ({
         </div>
       </div>
 
-      {/* Interactive [ 日历 ] Button */}
-      <div className="w-full mt-2 flex flex-col items-center">
-        <button
-          type="button"
-          disabled={!editable}
-          onClick={handleToggleCalendar}
-          aria-label={`${title}打开日历选择日期`}
-          aria-expanded={openBox === 'calendar'}
-          className={`min-h-[34px] px-4 py-1 rounded-xl text-xs font-medium inline-flex items-center justify-center gap-1.5 border transition-colors ${
-            !editable
-              ? 'border-[#FF6B00]/20 bg-white text-[#6E6E73] cursor-default'
-              : openBox === 'calendar' || isCustomCalendarDay
-              ? 'border-[#FF6B00] bg-[#FFF3EB] text-[#FF6B00] font-semibold cursor-pointer'
-              : 'border-black/[0.08] bg-[#F5F5F7] hover:bg-[#E8E8ED] text-[#1D1D1F] cursor-pointer'
-          }`}
-        >
-          <Calendar className="w-3.5 h-3.5 text-[#FF6B00]" />
-          <span>日历</span>
-        </button>
-      </div>
+      {/* Interactive [ 日历 ] Button (Only shown on editable nodes, hidden on calculated result nodes) */}
+      {editable && (
+        <div className="w-full mt-2 flex flex-col items-center">
+          <button
+            type="button"
+            onClick={handleToggleCalendar}
+            aria-label={`${title}打开日历选择日期`}
+            aria-expanded={openBox === 'calendar'}
+            className={`min-h-[34px] px-4 py-1 rounded-xl text-xs font-medium inline-flex items-center justify-center gap-1.5 border transition-colors ${
+              openBox === 'calendar' || isCustomCalendarDay
+                ? 'border-[#FF6B00] bg-[#FFF3EB] text-[#FF6B00] font-semibold cursor-pointer'
+                : 'border-black/[0.08] bg-[#F5F5F7] hover:bg-[#E8E8ED] text-[#1D1D1F] cursor-pointer'
+            }`}
+          >
+            <Calendar className="w-3.5 h-3.5 text-[#FF6B00]" />
+            <span>日历</span>
+          </button>
+        </div>
+      )}
 
       {/* Requirement 2: Built-in Apple-Style Interactive Calendar Picker Overlay */}
       {editable && openBox === 'calendar' && (

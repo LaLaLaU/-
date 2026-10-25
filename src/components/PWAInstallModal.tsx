@@ -45,7 +45,7 @@ export const PWAInstallModal: React.FC = () => {
                 </div>
                 <div>
                   <h3 id="pwa-modal-title" className="text-base font-semibold text-[#1D1D1F]">
-                    安装「温时计时」到手机桌面
+                    安装「加温计时」到手机桌面
                   </h3>
                   <p className="text-xs text-[#6E6E73]">
                     像原生安卓/苹果 App 一样全屏秒开、离线可用
