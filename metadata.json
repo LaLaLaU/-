@@ -1,0 +1,6 @@
+{
+  "name": "温时 · 烘烤加温计时台账",
+  "description": "专为喷漆烘烤、加温固化设计的高颜值时差与顺推倒推时间计算工具，支持苹果级滚轮选时与纸质登记台账一键生成。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
