@@ -4,6 +4,16 @@
 @import "@fontsource/noto-sans-sc/700.css";
 
 @layer base {
+  html,
+  body,
+  #root {
+    height: 100dvh;
+    width: 100vw;
+    overflow: hidden;
+    overscroll-behavior: none;
+    user-select: none;
+  }
+
   body {
     font-family: 'Plus Jakarta Sans', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     -webkit-tap-highlight-color: transparent;

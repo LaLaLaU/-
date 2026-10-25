@@ -68,26 +68,36 @@ export default function App() {
     [rightPoint, duration]
   );
 
+  const handleToggleFullscreen = () => {
+    if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else if (document.fullscreenElement && document.exitFullscreen) {
+      document.exitFullscreen().catch(() => {});
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#F5F5F7] text-[#1D1D1F] flex flex-col sm:flex-row">
-      {/* Left Vertical Navigation Sidebar */}
-      <aside className="bg-[#F5F5F7]/95 backdrop-blur-md border-b sm:border-b-0 sm:border-r border-black/[0.07] px-3 py-2.5 sm:w-[132px] sm:py-4 sm:px-2.5 flex sm:flex-col items-center sm:items-stretch justify-between gap-2 shrink-0">
-        <a
-          href="#top"
-          className="text-sm sm:text-base font-bold tracking-tight text-[#1D1D1F] sm:px-2 sm:pt-1 whitespace-nowrap shrink-0 text-center"
+    <div className="h-[100dvh] w-screen overflow-hidden bg-[#F5F5F7] text-[#1D1D1F] flex flex-row select-none">
+      {/* Ultra-Narrow Left Vertical Navigation Sidebar */}
+      <aside className="bg-[#F5F5F7]/95 backdrop-blur-md border-r border-black/[0.07] w-[66px] sm:w-[72px] py-2.5 px-1.5 flex flex-col items-center justify-between gap-1.5 shrink-0 h-full">
+        <button
+          type="button"
+          onClick={handleToggleFullscreen}
+          title="点击切换全屏"
+          className="text-[12px] font-bold tracking-tight text-[#1D1D1F] leading-tight text-center py-1 cursor-pointer hover:text-[#FF6B00] transition-colors"
         >
           加温计时
-        </a>
+        </button>
 
-        {/* Vertical Mode Switcher Navigation on Left */}
+        {/* Ultra-Compact Vertical Mode Switcher Navigation on Left */}
         <nav
           aria-label="计算模式切换"
-          className="bg-[#E8E8ED] p-1 rounded-2xl flex sm:flex-col gap-1.5 w-full"
+          className="bg-[#E8E8ED] p-1 rounded-2xl flex flex-col gap-1.5 w-full"
         >
           <button
             type="button"
             onClick={() => handleSwitchMode('diff')}
-            className={`min-h-[38px] sm:min-h-[42px] px-2.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap flex-1 sm:flex-initial ${
+            className={`min-h-[44px] px-1 py-1.5 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer whitespace-nowrap w-full ${
               activeMode === 'diff'
                 ? 'bg-white text-[#1D1D1F] shadow-sm'
                 : 'text-[#6E6E73] hover:text-[#1D1D1F]'
@@ -101,7 +111,7 @@ export default function App() {
           <button
             type="button"
             onClick={() => handleSwitchMode('forward')}
-            className={`min-h-[38px] sm:min-h-[42px] px-2.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap flex-1 sm:flex-initial ${
+            className={`min-h-[44px] px-1 py-1.5 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer whitespace-nowrap w-full ${
               activeMode === 'forward'
                 ? 'bg-white text-[#1D1D1F] shadow-sm'
                 : 'text-[#6E6E73] hover:text-[#1D1D1F]'
@@ -115,7 +125,7 @@ export default function App() {
           <button
             type="button"
             onClick={() => handleSwitchMode('backward')}
-            className={`min-h-[38px] sm:min-h-[42px] px-2.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap flex-1 sm:flex-initial ${
+            className={`min-h-[44px] px-1 py-1.5 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer whitespace-nowrap w-full ${
               activeMode === 'backward'
                 ? 'bg-white text-[#1D1D1F] shadow-sm'
                 : 'text-[#6E6E73] hover:text-[#1D1D1F]'
@@ -127,27 +137,21 @@ export default function App() {
           </button>
         </nav>
 
-        <div className="flex items-center justify-center shrink-0">
+        <div className="w-full flex items-center justify-center shrink-0">
           <PWAInstallModal />
         </div>
       </aside>
 
-      {/* Main Horizontal 3-Column Stage (Designed for Phone Landscape & Desktop) */}
+      {/* Main Horizontal 3-Column Stage (Adaptive Full-Screen Fit, No Vertical Scroll) */}
       <main
         id="top"
-        className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-4 py-3 flex flex-col justify-center"
+        className="flex-1 h-full overflow-hidden px-2.5 sm:px-4 py-2 flex items-center justify-center"
       >
-        {/* Subtle Portrait Rotation Suggestion Banner (Visible only on narrow portrait screens < 500px) */}
-        <div className="sm:hidden mb-3 px-3 py-1.5 rounded-xl bg-white/80 border border-black/[0.06] flex items-center justify-center gap-1.5 text-[11px] text-[#6E6E73]">
-          <Smartphone className="w-3.5 h-3.5 text-[#FF6B00] rotate-90 shrink-0" />
-          <span>横屏握持手机，即可体验左 · 中 · 右同屏全景调节</span>
-        </div>
-
         {/* 3-Column Horizontal Sketch Architecture:
             [ Left Time Node ]  ----( X.X小时 / X时X分 )---->  [ Right Time Node ] */}
-        <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 sm:gap-3.5 items-center">
+        <div className="grid grid-cols-12 gap-2.5 sm:gap-4 items-center w-full max-w-5xl">
           {/* LEFT NODE: Start Time */}
-          <div className="sm:col-span-4">
+          <div className="col-span-4">
             {activeMode === 'diff' && (
               <TimeEndpointNode
                 title="开始时间"
@@ -185,7 +189,7 @@ export default function App() {
           </div>
 
           {/* CENTER BRIDGE: Arrow with X.X小时 above and X时X分 below */}
-          <div className="sm:col-span-4">
+          <div className="col-span-4">
             <CenterArrowBridge
               mode={activeMode}
               diffResult={diffResult}
@@ -196,7 +200,7 @@ export default function App() {
           </div>
 
           {/* RIGHT NODE: End Time */}
-          <div className="sm:col-span-4">
+          <div className="col-span-4">
             {activeMode === 'diff' && (
               <TimeEndpointNode
                 title="结束时间"

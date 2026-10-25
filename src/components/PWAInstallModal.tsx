@@ -23,11 +23,11 @@ export const PWAInstallModal: React.FC = () => {
       <button
         type="button"
         onClick={handleTrigger}
-        className="min-h-[40px] px-3.5 py-2 rounded-xl bg-[#1D1D1F] text-white text-xs font-medium flex items-center gap-1.5 hover:bg-[#1D1D1F]/90 active:scale-[0.98] transition-all whitespace-nowrap shrink-0 cursor-pointer"
+        className="w-full min-h-[34px] px-1.5 py-1.5 rounded-xl bg-[#1D1D1F] text-white text-[11px] font-medium flex items-center justify-center gap-1 hover:bg-[#1D1D1F]/90 active:scale-[0.98] transition-all whitespace-nowrap shrink-0 cursor-pointer"
         aria-label="安装到手机桌面"
       >
-        <Download className="w-3.5 h-3.5 text-[#FF6B00]" />
-        <span>装到手机桌面</span>
+        <Download className="w-3 h-3 text-[#FF6B00] shrink-0" />
+        <span>装桌面</span>
       </button>
 
       {showGuide && (

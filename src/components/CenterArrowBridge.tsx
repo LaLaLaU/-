@@ -151,13 +151,13 @@ export const CenterArrowBridge: React.FC<CenterArrowBridgeProps> = ({
   return (
     <div
       data-testid="center-arrow-editable"
-      className="flex flex-col items-center justify-center px-1 py-1"
+      className="flex flex-col items-center justify-center px-1 py-0.5"
     >
       {/* Top hint badge */}
-      <div className="flex items-center gap-1 text-xs font-medium text-[#6E6E73] mb-1.5">
+      <div className="flex items-center gap-1 text-[11px] font-medium text-[#6E6E73] mb-1">
         <span>加温时长</span>
         {hasConfirmedDuration && (
-          <CheckCircle2 className="w-3.5 h-3.5 text-[#1D7A4C]" aria-label="时长已确认" />
+          <CheckCircle2 className="w-3 h-3 text-[#1D7A4C]" aria-label="时长已确认" />
         )}
       </div>
 
@@ -166,14 +166,14 @@ export const CenterArrowBridge: React.FC<CenterArrowBridgeProps> = ({
         <button
           type="button"
           onClick={() => adjustHours(-1)}
-          className="w-9 h-9 rounded-xl bg-white border border-black/[0.08] shadow-xs hover:bg-[#E8E8ED] active:scale-95 flex items-center justify-center text-[#1D1D1F] cursor-pointer shrink-0"
+          className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white border border-black/[0.08] shadow-xs hover:bg-[#E8E8ED] active:scale-95 flex items-center justify-center text-[#1D1D1F] cursor-pointer shrink-0"
           aria-label="减少1小时"
         >
           <Minus className="w-4 h-4" />
         </button>
 
         <div
-          className="px-4 py-1.5 rounded-2xl bg-white border-2 border-[#FF6B00] shadow-xs text-xl sm:text-2xl font-bold font-mono-tabular text-[#FF6B00] whitespace-nowrap shrink-0 select-none"
+          className="px-3.5 py-1 rounded-2xl bg-white border-2 border-[#FF6B00] shadow-xs text-lg sm:text-xl font-bold font-mono-tabular text-[#FF6B00] whitespace-nowrap shrink-0 select-none"
           aria-label="当前加温小时数"
         >
           {decimalHoursStr} 小时
@@ -182,7 +182,7 @@ export const CenterArrowBridge: React.FC<CenterArrowBridgeProps> = ({
         <button
           type="button"
           onClick={() => adjustHours(1)}
-          className="w-9 h-9 rounded-xl bg-white border border-black/[0.08] shadow-xs hover:bg-[#E8E8ED] active:scale-95 flex items-center justify-center text-[#1D1D1F] cursor-pointer shrink-0"
+          className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white border border-black/[0.08] shadow-xs hover:bg-[#E8E8ED] active:scale-95 flex items-center justify-center text-[#1D1D1F] cursor-pointer shrink-0"
           aria-label="增加1小时"
         >
           <Plus className="w-4 h-4" />
@@ -192,12 +192,12 @@ export const CenterArrowBridge: React.FC<CenterArrowBridgeProps> = ({
       {/* Horizontal Long Arrow: points left (<---) toward 开始时间 in backward mode, right (--->) in forward mode */}
       <div
         data-testid={`center-arrow-line-${mode === 'backward' ? 'left' : 'right'}`}
-        className="w-full max-w-[230px] my-2 flex items-center"
+        className="w-full max-w-[230px] my-1.5 flex items-center"
       >
         {mode === 'backward' ? (
           <>
             <svg
-              className="w-5 h-5 text-[#1D1D1F] -mr-2 shrink-0 z-10"
+              className="w-4 h-4 sm:w-5 sm:h-5 text-[#1D1D1F] -mr-2 shrink-0 z-10"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -214,7 +214,7 @@ export const CenterArrowBridge: React.FC<CenterArrowBridgeProps> = ({
           <>
             <div className="h-[2.5px] flex-1 bg-[#1D1D1F] rounded-full" />
             <svg
-              className="w-5 h-5 text-[#1D1D1F] -ml-2 shrink-0 z-10"
+              className="w-4 h-4 sm:w-5 sm:h-5 text-[#1D1D1F] -ml-2 shrink-0 z-10"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -230,12 +230,12 @@ export const CenterArrowBridge: React.FC<CenterArrowBridgeProps> = ({
       </div>
 
       {/* Below the arrow: X时X分 */}
-      <div className="text-base sm:text-lg font-bold font-mono-tabular text-[#1D1D1F] whitespace-nowrap select-none">
+      <div className="text-sm sm:text-base font-bold font-mono-tabular text-[#1D1D1F] whitespace-nowrap select-none">
         {hmStr}
       </div>
 
       {/* Compact Quick Hours (Swipeable Page 1: 8-24h / Page 2: >24h) & Independent Minutes Grid */}
-      <div className="mt-2 w-full max-w-[260px] bg-white rounded-2xl p-2.5 border border-black/[0.07] shadow-xs select-none">
+      <div className="mt-1.5 w-full max-w-[260px] bg-white rounded-2xl p-2 border border-black/[0.07] shadow-xs select-none">
         {/* Swipeable Hours Area */}
         <div
           data-testid="hours-swipe-container"
@@ -254,7 +254,7 @@ export const CenterArrowBridge: React.FC<CenterArrowBridgeProps> = ({
                   key={h}
                   type="button"
                   onClick={() => handleSelectHour(h)}
-                  className={`min-h-[30px] rounded-lg font-mono-tabular text-xs font-semibold transition-all cursor-pointer ${
+                  className={`min-h-[27px] rounded-lg font-mono-tabular text-xs font-semibold transition-all cursor-pointer ${
                     active
                       ? 'bg-[#FF6B00] text-white shadow-xs'
                       : 'bg-[#F5F5F7] text-[#1D1D1F] hover:bg-[#E8E8ED]'
@@ -267,7 +267,7 @@ export const CenterArrowBridge: React.FC<CenterArrowBridgeProps> = ({
           </div>
 
           {/* Subtle Page Indicator & Switcher for Page 1 (8-24h) and Page 2 (24h+) */}
-          <div className="flex items-center justify-between mt-1.5 px-0.5">
+          <div className="flex items-center justify-between mt-1 px-0.5">
             <button
               type="button"
               onClick={() => setHourPage(0)}
@@ -318,7 +318,7 @@ export const CenterArrowBridge: React.FC<CenterArrowBridgeProps> = ({
         </div>
 
         {/* Minutes Grid: '+' removed, independent selection highlighted simultaneously with hours */}
-        <div className="grid grid-cols-4 gap-1 mt-1.5 pt-1.5 border-t border-black/[0.06]">
+        <div className="grid grid-cols-4 gap-1 mt-1 pt-1 border-t border-black/[0.06]">
           {QUICK_MINUTES.map((m) => {
             const active = duration.minutes === m;
             return (
@@ -326,7 +326,7 @@ export const CenterArrowBridge: React.FC<CenterArrowBridgeProps> = ({
                 key={m}
                 type="button"
                 onClick={() => handleToggleMinute(m)}
-                className={`min-h-[26px] px-1 rounded-lg font-mono-tabular text-[11px] font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                className={`min-h-[24px] px-1 rounded-lg font-mono-tabular text-[11px] font-semibold transition-all cursor-pointer whitespace-nowrap ${
                   active
                     ? 'bg-[#FF6B00] text-white shadow-xs'
                     : 'bg-[#F5F5F7] text-[#6E6E73] hover:text-[#1D1D1F]'
